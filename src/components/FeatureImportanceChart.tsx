@@ -1,3 +1,4 @@
+import { motion } from "framer-motion";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { FeatureImportance } from '@/data/mockData';
 
@@ -21,20 +22,46 @@ export function FeatureImportanceChart({ data, title }: FeatureImportanceChartPr
   }));
 
   return (
-    <div className="stat-card h-full">
+    <motion.div 
+      className="stat-card h-full"
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.5 }}
+      whileHover={{ 
+        boxShadow: "0 20px 40px -15px hsl(28, 100%, 54%, 0.15)",
+      }}
+    >
       <h3 className="font-display text-lg font-semibold mb-4">{title}</h3>
       
       {/* Legend */}
       <div className="flex flex-wrap gap-3 mb-4">
-        {Object.entries(categoryColors).map(([category, color]) => (
-          <div key={category} className="flex items-center gap-1.5">
-            <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: color }} />
+        {Object.entries(categoryColors).map(([category, color], index) => (
+          <motion.div 
+            key={category} 
+            className="flex items-center gap-1.5"
+            initial={{ opacity: 0, x: -10 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: index * 0.1 }}
+          >
+            <motion.div 
+              className="w-3 h-3 rounded-sm" 
+              style={{ backgroundColor: color }}
+              whileHover={{ scale: 1.3 }}
+            />
             <span className="text-xs text-muted-foreground capitalize">{category}</span>
-          </div>
+          </motion.div>
         ))}
       </div>
       
-      <div className="h-72">
+      <motion.div 
+        className="h-72"
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ delay: 0.3 }}
+      >
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
             data={chartData}
@@ -67,11 +94,14 @@ export function FeatureImportanceChart({ data, title }: FeatureImportanceChartPr
               }}
               labelStyle={{ color: 'hsl(var(--foreground))' }}
               formatter={(value: any) => [`${value}%`, 'Importance']}
+              animationDuration={300}
             />
             <Bar 
               dataKey="importancePercent" 
               radius={[0, 4, 4, 0]}
               maxBarSize={24}
+              animationDuration={1000}
+              animationBegin={200}
             >
               {chartData.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={categoryColors[entry.category]} />
@@ -79,7 +109,7 @@ export function FeatureImportanceChart({ data, title }: FeatureImportanceChartPr
             </Bar>
           </BarChart>
         </ResponsiveContainer>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }
